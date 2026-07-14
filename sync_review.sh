@@ -11,7 +11,7 @@
 # (see prune_review.sh). Loose files directly in "Pic for doc" go into
 # "_review/" root (unsorted).
 set -e
-SRC="/home/greissner/Documents/Projects/Blender_Course/Pic for doc"
+SRC="/home/greissner/Documents/Projects/Pic for doc"
 DEST="/home/greissner/blender-course-assets/_review"
 cd /home/greissner/blender-course-assets
 
