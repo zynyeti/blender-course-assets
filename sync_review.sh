@@ -1,15 +1,19 @@
 #!/bin/bash
-# Syncs new images from the Blender course "Pic for doc" staging folder into
+# Syncs images from the Blender course "Pic for doc" staging folder into
 # blender-course-assets/_review/ (compressed JPG) and pushes to GitHub, so
 # Claude can pull them via raw.githubusercontent.com for style/placement review.
 # This is a SCRATCH review space, separate from the final hosted asset
 # folders (/blenderville/, /ancient-history/, etc.) — nothing here is final.
 #
 # Mirrors subfolder structure: if a project has its own subfolder under
-# "Pic for doc" (e.g. "Pic for doc/RubiksCube/"), it's mirrored into
-# "_review/RubiksCube/" so it can be pruned per-project once complete
+# "Pic for doc" (e.g. "Pic for doc/EdTech/RubiksCube/"), it's mirrored into
+# "_review/EdTech/RubiksCube/" so it can be pruned per-project once complete
 # (see prune_review.sh). Loose files directly in "Pic for doc" go into
 # "_review/" root (unsorted).
+#
+# Re-syncs a file if the SOURCE is newer than the existing review copy (not
+# just "does a review copy exist") — so overwriting a staged PNG in place
+# (same filename, new content, e.g. a regenerated cover) gets picked up.
 set -e
 SRC="/home/greissner/Documents/Projects/Pic for doc"
 DEST="/home/greissner/blender-course-assets/_review"
@@ -29,7 +33,7 @@ for f in "$SRC"/**/*.png "$SRC"/**/*.jpg "$SRC"/**/*.jpeg; do
   fi
   mkdir -p "$outdir"
   out="$outdir/${name}.jpg"
-  if [ ! -f "$out" ]; then
+  if [ ! -f "$out" ] || [ "$f" -nt "$out" ]; then
     python3 -c "
 from PIL import Image
 img = Image.open('$f')
